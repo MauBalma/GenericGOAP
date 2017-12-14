@@ -19,7 +19,7 @@ namespace GOAP
         /// Apply this action on the given state.
         /// </summary>
         /// <param name="worldState">State to transform.</param>
-        /// <returns>Item1 = Transformed state. Item2 = Transformation cost.</returns>
-        Tuple<Model, float> Apply(Model worldState);
+        /// <returns>The transition that contains the altered state and the cost of change.</returns>
+        Transition<Model> Apply(Model worldState);
     }
 }

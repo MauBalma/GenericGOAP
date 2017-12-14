@@ -42,8 +42,8 @@ namespace GOAP
                 {
                     if (action.IsValid(currentState.Item1))
                     {
-                        Tuple<Model, float> stateCost = action.Apply(clone(currentState.Item1));
-                        nodes.Add(Tuple.Create(Tuple.Create(stateCost.Item1, action), stateCost.Item2));
+                        var transition = action.Apply(clone(currentState.Item1));
+                        nodes.Add(Tuple.Create(Tuple.Create(transition.State, action), transition.Cost));
                     }
                 }
                 return nodes;

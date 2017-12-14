@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using GOAP;
 
-public class GOAPTest : MonoBehaviour
+public class GOAPExample : MonoBehaviour
 {
-    class Student
+    public int desiredSkill = 4;
+    public Student initialState;
+
+    [Serializable]
+    public class Student
     {
-        public float skill;
-        public float energy;
-        public float time;
+        public int skill;
+        public int energy;
+        public int time;
 
         public Student Clone()
         {
@@ -24,15 +28,11 @@ public class GOAPTest : MonoBehaviour
 
     void Start()
     {
-        int desiredSkill = 4;
-
-        var initial = new Student { skill = 0, energy = 2, time = 6f };
-
         Func<Student, bool> condition = student => student.skill >= desiredSkill;
         Func<Student, float> heuristic = student => desiredSkill - student.skill;
         Func<Student, Student> clone = student => student.Clone();
 
-        GenericAction<string, Student> study = new GenericAction<string, Student>
+        var study = new GOAP.Action<string, Student>
             (
             "Study",
             student => student.energy >= 1 && student.time >= 1,
@@ -41,11 +41,11 @@ public class GOAPTest : MonoBehaviour
                 student.skill++;
                 student.energy--;
                 student.time--;
-                return Tuple.Create(student, 1f);
+                return Transition.Create(student, 1f);
             }
             );
 
-        GenericAction<string, Student> sleep = new GenericAction<string, Student>
+        var sleep = new GOAP.Action<string, Student>
             (
             "Sleep",
             student => student.time >= 1,
@@ -53,14 +53,14 @@ public class GOAPTest : MonoBehaviour
             {
                 student.energy++;
                 student.time--;
-                return Tuple.Create(student, 1f);
+                return Transition.Create(student, 1f);
             }
             );        
 
-        var actions = new List<GenericAction<string, Student>>() { study, sleep };
+        var actions = new List<GOAP.Action<string, Student>>() { study, sleep };
 
-        var plan = Planner<Student, GenericAction<string, Student>>
-            .Plan(initial, actions, condition, heuristic, clone);
+        var plan = Planner<Student, GOAP.Action<string, Student>>
+            .Plan(initialState, actions, condition, heuristic, clone);
 
         if (plan != null)
         {
